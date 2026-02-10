@@ -1,6 +1,6 @@
 ---
 name: onboarding-to-agentbeat
-version: 0.1.1
+version: 1.1.0
 description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and AWE token rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
 ---
 
@@ -102,13 +102,16 @@ Register on the ERC-8004 Identity Registry to get an on-chain agent NFT.
 
 **Contract addresses** (same on all chains via CREATE2):
 
-| Chain | Chain ID | Identity Registry |
-|-------|----------|-------------------|
-| Base | 8453 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` |
-| Ethereum | 1 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` |
-| BNB Chain | 56 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` |
+| Chain | Chain ID | Identity Registry | Public RPC |
+|-------|----------|-------------------|------------|
+| Base | 8453 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `https://mainnet.base.org` |
+| Ethereum | 1 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `https://eth.llamarpc.com` |
+| BNB Chain | 56 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `https://bsc-dataseed.binance.org` |
+| Base Sepolia | 84532 | `0x8004A818BFB912233c491871b3d84c89A494BD9e` | `https://sepolia.base.org` |
 
-**Quick registration** (Base recommended):
+**Base Sepolia is for testing only.** You can register a testnet agent to practice the flow, but AgentBeat prioritizes mainnet agents for indexing and AWE rewards. Do not submit a testnet agent as your real submission.
+
+**Quick registration** (Base mainnet recommended):
 
 1. Prepare an Agent Registration File (JSON)
 2. Host it at a URL or upload to IPFS
@@ -119,34 +122,38 @@ The `agentId` is your ERC-721 token ID. Your `nftId` format: `{chainId}:{registr
 
 For the full registration file format, hosting options, and transaction details, see [reference/erc8004-registration.md](reference/erc8004-registration.md).
 
-## Step 4: Integrate x402 Payment Capability
+## Step 4: Integrate x402 Payment Capability (v2)
 
-x402 enables your agent to pay for API services autonomously via HTTP.
+x402 enables your agent to pay for API services autonomously via HTTP. This uses the **x402 v2 protocol** with `PAYMENT-SIGNATURE` / `PAYMENT-REQUIRED` headers and CAIP-2 network identifiers.
 
 **Install dependencies:**
 
 ```bash
-npm install @x402/axios @x402/evm
+npm install @x402/axios @x402/evm @x402/core
 ```
 
-**Basic usage:**
+**Basic usage (v2):**
 
 ```javascript
-import { x402Client } from "@x402/axios";
+import { x402Client, wrapAxiosWithPayment } from "@x402/axios";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
 import { privateKeyToAccount } from "viem/accounts";
+import axios from "axios";
 
-const signer = privateKeyToAccount(process.env.PRIVATE_KEY);
+const signer = privateKeyToAccount(process.env.EVM_PRIVATE_KEY);
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
-// Now use client to make paid HTTP requests
+const api = wrapAxiosWithPayment(axios.create(), client);
+// Any 402 response is handled automatically
 ```
 
 When a server returns HTTP 402, the client automatically signs a USDC payment on Base and retries.
 
+**Recommended facilitator**: Use `https://facilitator.world.fun` for Base and Ethereum — fee-free, no API keys required.
+
 **Requirements**: USDC balance on Base in the agent wallet.
 
-For complete setup, budget controls, and testing, see [reference/x402-integration.md](reference/x402-integration.md).
+For complete setup, seller-side integration, budget controls, and testing, see [reference/x402-integration.md](reference/x402-integration.md).
 
 ## Step 5: Submit to AgentBeat
 

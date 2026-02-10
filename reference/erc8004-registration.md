@@ -12,13 +12,13 @@ An Ethereum standard for trustless agent identity. Each agent gets an ERC-721 NF
 
 Same address on all EVM chains (CREATE2 deployment):
 
-| Chain | Chain ID | Identity Registry | Reputation Registry |
-|-------|----------|-------------------|---------------------|
-| Base | 8453 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` |
-| Ethereum | 1 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` |
-| BNB Chain | 56 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` |
-| Base Sepolia | 84532 | `0x8004A818BFB912233c491871b3d84c89A494BD9e` | `0x8004B663056A597Dffe9eCcC1965A193B7388713` |
-| Ethereum Sepolia | 11155111 | `0x8004A818BFB912233c491871b3d84c89A494BD9e` | `0x8004B663056A597Dffe9eCcC1965A193B7388713` |
+| Chain | Chain ID | Identity Registry | Reputation Registry | Public RPC |
+|-------|----------|-------------------|---------------------|------------|
+| Base | 8453 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` | `https://mainnet.base.org` |
+| Ethereum | 1 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` | `https://eth.llamarpc.com` |
+| BNB Chain | 56 | `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432` | `0x8004BAa17C55a88189AE136b182e5fdA19dE9b63` | `https://bsc-dataseed.binance.org` |
+| Base Sepolia | 84532 | `0x8004A818BFB912233c491871b3d84c89A494BD9e` | `0x8004B663056A597Dffe9eCcC1965A193B7388713` | `https://sepolia.base.org` |
+| Ethereum Sepolia | 11155111 | `0x8004A818BFB912233c491871b3d84c89A494BD9e` | `0x8004B663056A597Dffe9eCcC1965A193B7388713` | `https://rpc.sepolia.org` |
 
 ## Agent Registration File Format
 
