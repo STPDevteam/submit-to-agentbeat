@@ -28,7 +28,8 @@ Content-Type: application/json
   "twitterUrl": "https://twitter.com/youragent",
   "githubUrl": "https://github.com/youragent",
   "moltbookUrl": "https://www.moltbook.com/user/youragent",
-  "x402PaymentAddress": "0xYourAgentWalletAddress"
+  "x402PaymentAddress": "0xYourAgentWalletAddress",
+  "usesWorldFacilitator": true
 }
 ```
 
@@ -47,6 +48,7 @@ Content-Type: application/json
 | `githubUrl` | No | valid URL | Agent's GitHub repository |
 | `moltbookUrl` | No | valid URL | Agent's MoltBook profile |
 | `x402PaymentAddress` | No | `0x` + 40 hex | Agent's x402 payment/receiving address |
+| `usesWorldFacilitator` | No | boolean | Whether the agent uses `https://facilitator.world.fun` as its x402 facilitator. Default: `false` |
 
 **Tip**: Use the same address for `address` and `x402PaymentAddress` (your agent wallet). The `nftId` comes from ERC-8004 registration (Step 3 in the main flow).
 
@@ -75,7 +77,8 @@ curl -X POST https://api.agentbeat.fun/api/v1/submissions \
     "nftIds": ["8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432:123"],
     "icon": "🤖",
     "description": "Autonomous DeFi portfolio manager powered by x402",
-    "x402PaymentAddress": "0x1234567890123456789012345678901234567890"
+    "x402PaymentAddress": "0x1234567890123456789012345678901234567890",
+    "usesWorldFacilitator": true
   }'
 ```
 

@@ -102,7 +102,6 @@ USDC has 6 decimals. Divide the hex result by 10^6 for the human-readable amount
 | Base | `https://mainnet.base.org` | 8453 |
 | Ethereum | `https://eth.llamarpc.com` | 1 |
 | BNB Chain | `https://bsc-dataseed.binance.org` | 56 |
-| Base Sepolia (testnet) | `https://sepolia.base.org` | 84532 |
 
 ## Requesting Gas from Owner
 

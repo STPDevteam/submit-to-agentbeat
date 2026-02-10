@@ -47,7 +47,7 @@ Endpoints:
 
 Other facilitator options:
 - **CDP Facilitator** (Coinbase): `https://x402-facilitator.cdp.coinbase.com` — requires CDP API keys, supports Base + Solana
-- **x402.org Facilitator**: `https://x402.org/facilitator` — testnet only (Base Sepolia)
+- **x402.org Facilitator**: `https://x402.org/facilitator` — community-operated
 
 ## Setup (Node.js) — v2
 
@@ -174,18 +174,6 @@ const MAX_DAILY_SPEND_USD = 1.0;
 - **USDC contract (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
 - Typical API costs: $0.001 - $0.01 per request
 
-## Testing on Testnet
-
-Use Base Sepolia for testing:
-
-```javascript
-// Testnet facilitator (Base Sepolia only)
-const FACILITATOR_URL = "https://x402.org/facilitator";
-
-// Network: eip155:84532 (Base Sepolia in CAIP-2 format)
-// Get test USDC from Base Sepolia faucet
-```
-
 ## Discovering x402 Services
 
 - **x402 Bazaar**: `curl https://bazaar.x402.org/api/listings`
@@ -197,7 +185,6 @@ const FACILITATOR_URL = "https://x402.org/facilitator";
 |---------|-----------|--------|
 | Base | `eip155:8453` | Primary (recommended) |
 | Ethereum | `eip155:1` | Supported |
-| Base Sepolia | `eip155:84532` | Testnet |
 | Solana | `solana:mainnet` | Supported (requires SVM signer) |
 
 ## v2 Package Reference
