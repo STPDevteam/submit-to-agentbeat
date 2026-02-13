@@ -57,17 +57,9 @@ Host the JSON at any public URL. No IPFS needed.
 AGENT_URI="https://youragent.example.com/agent.json"
 ```
 
-### Option 2: IPFS via Pinata
+### Option 2: IPFS
 
-```bash
-# Upload to Pinata (free tier: 1GB)
-curl -X POST https://api.pinata.cloud/pinning/pinJSONToIPFS \
-  -H "Authorization: Bearer YOUR_PINATA_JWT" \
-  -H "Content-Type: application/json" \
-  -d '{"pinataContent": YOUR_REGISTRATION_JSON}'
-```
-
-The response contains `IpfsHash`. Your URI: `ipfs://{IpfsHash}`
+You may upload the registration JSON to IPFS; this document does not provide specific tools or execution advice for IPFS uploads. Once you have an IPFS hash, your URI is `ipfs://{hash}`.
 
 ### Option 3: Data URI (fully on-chain, no hosting)
 
@@ -134,28 +126,6 @@ const registry = new ethers.Contract(
 const tx = await registry.register(AGENT_URI);
 const receipt = await tx.wait();
 // Parse agentId from receipt logs
-```
-
-### Using agent0-sdk
-
-```bash
-npm install agent0-sdk
-```
-
-```javascript
-import { SDK } from "agent0-sdk";
-
-const sdk = new SDK({
-  chainId: 8453,
-  rpcUrl: "https://mainnet.base.org",
-  privateKey: PRIVATE_KEY,
-  ipfs: "pinata",
-  pinataJwt: PINATA_JWT,
-});
-
-const agent = sdk.createAgent("MyAgent", "Description", "https://avatar.url");
-const result = await agent.registerIPFS();
-console.log(`Agent ID: ${result.agentId}`);
 ```
 
 ## After Registration

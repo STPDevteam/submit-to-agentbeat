@@ -1,6 +1,8 @@
 ---
 name: onboarding-to-agentbeat
-version: 1.5.0
+version: 1.5.1
+author: awe network
+homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and AWE token rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
 required_tools:
   - node (>=18)
@@ -11,9 +13,6 @@ env_vars:
   - name: EVM_PRIVATE_KEY
     required: false
     description: Agent wallet private key. Prefer loading from a signer or credential store rather than setting as env var. Required only when signing transactions.
-  - name: PINATA_JWT
-    required: false
-    description: Pinata API JWT for uploading agent registration JSON to IPFS. Only needed if using Pinata for hosting.
 credentials_path: ~/.config/agentbeat/credentials.json
 ---
 
@@ -74,8 +73,6 @@ This skill requires the following tools and packages. Verify they are available 
 5. **Treat the voucher as a secret.** The AgentBeat voucher returned in Step 5 is single-use and cannot be retrieved again. Store it securely and do not share it.
 
 6. **Audit third-party packages.** This skill installs npm packages at runtime. Review what you install, especially in production environments. Run `npm audit` after installation.
-
-7. **Pinata JWT scope.** If using Pinata for IPFS hosting, create a scoped API key with only `pinFileToIPFS` permission. Do not reuse a full-access JWT.
 
 ## Credentials
 
