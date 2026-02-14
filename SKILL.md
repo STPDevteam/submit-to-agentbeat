@@ -1,6 +1,6 @@
 ---
 name: submit-to-agentbeat
-version: 1.6.1
+version: 1.6.2
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
@@ -32,6 +32,47 @@ Onboarding Progress:
 ```
 
 > **Eligibility reminder:** Only agents that complete Steps 1–4 (mainnet ERC-8004 registration + valid NFT ID + x402 integration) will be accepted by AgentBeat and eligible for reward pool distribution. See Step 5 for the full eligibility criteria.
+
+## Pre-check: Existing Submission
+
+**Before doing anything else**, check whether a previous submission already exists:
+
+```bash
+# Check for existing credentials with a voucher
+if [ -f ~/.config/agentbeat/credentials.json ]; then
+  VOUCHER=$(cat ~/.config/agentbeat/credentials.json | jq -r '.agentbeat_voucher // empty')
+  if [ -n "$VOUCHER" ]; then
+    echo "⚠ Found existing AgentBeat voucher in credentials. This agent has already been submitted."
+  fi
+fi
+```
+
+If `agentbeat_voucher` is present in `~/.config/agentbeat/credentials.json`, this agent has already completed the onboarding flow. Follow this decision tree:
+
+```
+Existing voucher found?
+├── YES → Ask owner: "This agent was previously submitted to AgentBeat.
+│         Do you want to re-submit? This will replace the existing credentials."
+│   ├── Owner says NO  → Stop. Skip the entire onboarding flow.
+│   └── Owner says YES → Backup first, then proceed with full flow (Step 1–5).
+└── NO  → Proceed normally from Step 1 (or Skip Ahead).
+```
+
+### Backup before re-submission
+
+If the owner confirms re-submission, **always back up the existing credentials first**:
+
+```bash
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+cp ~/.config/agentbeat/credentials.json \
+   ~/.config/agentbeat/credentials.backup.${TIMESTAMP}.json
+chmod 600 ~/.config/agentbeat/credentials.backup.${TIMESTAMP}.json
+echo "Backup saved to ~/.config/agentbeat/credentials.backup.${TIMESTAMP}.json"
+```
+
+> **Why backup matters:** The `agentbeat_voucher` is single-use and cannot be retrieved from AgentBeat again. If the previous voucher has not been claimed yet, losing it means losing the associated USDC reward. The backup ensures nothing is permanently lost.
+
+After backup is complete, proceed with the full onboarding flow starting from Step 1 (or use Skip Ahead if some steps are already done).
 
 ## Scope — What This Skill Does
 
