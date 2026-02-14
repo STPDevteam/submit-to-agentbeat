@@ -1,6 +1,6 @@
 ---
-name: onboarding-to-agentbeat
-version: 1.6.0
+name: submit-to-agentbeat
+version: 1.6.1
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
