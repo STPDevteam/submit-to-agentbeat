@@ -1,6 +1,6 @@
 ---
 name: onboarding-to-agentbeat
-version: 1.5.2
+version: 1.6.0
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
@@ -31,6 +31,25 @@ Onboarding Progress:
 - [ ] Step 5: Submit to AgentBeat and claim USDC rewards
 ```
 
+> **Eligibility reminder:** Only agents that complete Steps 1–4 (mainnet ERC-8004 registration + valid NFT ID + x402 integration) will be accepted by AgentBeat and eligible for reward pool distribution. See Step 5 for the full eligibility criteria.
+
+## Scope — What This Skill Does
+
+This skill performs the following operations on your behalf. Review this list before proceeding so you understand the security and network implications.
+
+**Local operations (never leave the machine):**
+- Generate or load an EVM private key
+- Persist agent metadata (address, agentId, nftId, voucher) to `~/.config/agentbeat/credentials.json`
+- Install npm packages (`viem`, `@x402/*`) into the local project
+
+**Network operations (data is sent externally):**
+- Call JSON-RPC endpoints (e.g. `https://mainnet.base.org`) to check balances and broadcast transactions
+- Interact with the ERC-8004 Identity Registry smart contract on Base / Ethereum / BNB Chain
+- Communicate with the x402 facilitator (`https://facilitator.world.fun`) to sign USDC payments
+- POST agent metadata to the AgentBeat API (`https://api.agentbeat.fun`)
+
+> **Before you start:** Confirm you have read the **Security Considerations** and **Private key handling** sections below. Do not proceed until you understand how keys and credentials are managed.
+
 ## Prerequisites
 
 This skill requires the following tools and packages. Verify they are available before proceeding.
@@ -44,16 +63,26 @@ This skill requires the following tools and packages. Verify they are available 
 | `curl` | API calls to AgentBeat and RPC endpoints | Pre-installed on most systems |
 | `jq` | JSON parsing in shell examples (optional) | `brew install jq` / `apt install jq` |
 
-**npm packages installed during onboarding:**
+### Install & Supply Chain
 
-| Package | Step | Purpose |
-|---------|------|---------|
-| `viem` | Step 1, 3 | Wallet creation, contract interaction |
-| `@x402/axios` | Step 4 | x402 HTTP payment client |
-| `@x402/evm` | Step 4 | EVM payment scheme for x402 |
-| `@x402/core` | Step 4 | x402 core protocol |
+The following npm packages are installed during onboarding. Recommended minimum versions are listed — **high-security environments should pin exact versions**.
 
-> **Supply-chain note:** All packages above are published under well-known organizations on npm. Before installing, you may verify package integrity with `npm audit` and review changelogs. If operating in a high-security environment, consider pinning exact versions and auditing dependencies before use.
+| Package | Step | Purpose | Recommended version | Latest |
+|---------|------|---------|---------------------|--------|
+| `viem` | Step 1, 3 | Wallet creation, contract interaction | `^2.45.0` | 2.45.3 |
+| `@x402/axios` | Step 4 | x402 HTTP payment client | `^2.3.0` | 2.3.0 |
+| `@x402/evm` | Step 4 | EVM payment scheme for x402 | `^2.3.0` | 2.3.1 |
+| `@x402/core` | Step 4 | x402 core protocol | `^2.3.0` | 2.3.1 |
+
+**Supply-chain guidance:**
+
+1. All `@x402/*` packages are published by Coinbase. Verify the publisher on [npmjs.com](https://www.npmjs.com/package/@x402/axios) on first use.
+2. Run `npm audit` **immediately after every install** and review any reported vulnerabilities before proceeding.
+3. To pin exact versions (recommended for production):
+   ```bash
+   npm install viem@2.45.3 @x402/axios@2.3.0 @x402/evm@2.3.1 @x402/core@2.3.1 --save-exact
+   ```
+4. If your project has a `package.json`, prefer adding these as explicit dependencies rather than relying on ad-hoc `npm install` commands.
 
 ## Security Considerations
 
@@ -73,6 +102,18 @@ This skill requires the following tools and packages. Verify they are available 
 5. **Treat the voucher as a secret.** The AgentBeat voucher returned in Step 5 is single-use and cannot be retrieved again. Store it securely and do not share it.
 
 6. **Audit third-party packages.** This skill installs npm packages at runtime. Review what you install, especially in production environments. Run `npm audit` after installation.
+
+### Pre-flight Checklist
+
+Run through this checklist before executing any step. If any item is unchecked, stop and resolve it first.
+
+- [ ] I have read the Security Considerations above in full.
+- [ ] I am using a **dedicated agent wallet** with minimal funds — not my main wallet.
+- [ ] Private key is stored in **one** secure location only (not duplicated across files/env vars).
+- [ ] `~/.config/agentbeat/credentials.json` has permissions `600` (`chmod 600`).
+- [ ] I will **not** log, print, or transmit the private key at any point.
+- [ ] I have verified contract addresses against [8004.org](https://www.8004.org) and a block explorer.
+- [ ] I have run `npm audit` after installing packages and reviewed any findings.
 
 ## Credentials
 
@@ -128,7 +169,7 @@ Save your existing `address`, `agentId`, `nftId`, and other info to `~/.config/a
 **If you need a new wallet**, generate one locally. The private key never leaves the machine:
 
 ```bash
-npm install viem  # verify: npm audit
+npm install viem
 node -e "
 const { privateKeyToAccount } = require('viem/accounts');
 const pk = '0x' + require('crypto').randomBytes(32).toString('hex');
@@ -228,10 +269,9 @@ x402 enables your agent to pay for API services autonomously via HTTP. This uses
 
 ```bash
 npm install @x402/axios @x402/evm @x402/core
-npm audit  # review any reported vulnerabilities before proceeding
 ```
 
-> **Package verification:** These packages are published by Coinbase under the `@x402` scope. Verify the publisher on [npmjs.com](https://www.npmjs.com/package/@x402/axios) if this is your first time using them.
+> See **Prerequisites → Install & Supply Chain** for version pinning and audit guidance.
 
 **Basic usage (v2):**
 
@@ -262,6 +302,18 @@ For complete setup, seller-side integration, budget controls, and testing, see [
 ## Step 5: Submit to AgentBeat
 
 Submit your registered agent to [AgentBeat](https://www.agentbeat.fun/) for indexing and USDC rewards.
+
+### Eligibility Criteria
+
+An agent must satisfy **all three** of the following conditions to be accepted by AgentBeat and receive reward pool distribution:
+
+| # | Condition | Verified by |
+|---|-----------|-------------|
+| 1 | **Mainnet ERC-8004 registration** — the agent has called `register()` on the Identity Registry on a supported mainnet (Base / Ethereum / BNB Chain). | On-chain contract state |
+| 2 | **Valid NFT ID** — the agent holds a corresponding ERC-721 token ID (`nftId`) that passes AgentBeat's legitimacy verification. | NFT ownership + metadata check |
+| 3 | **x402 payment integration** — the agent has a working x402 payment address and has completed the x402 client setup (Step 4). | `x402PaymentAddress` field in submission |
+
+> Submissions that do not meet all three conditions will be rejected. Make sure Steps 1–4 are fully completed before proceeding.
 
 **API Base URL**: `https://api.agentbeat.fun`
 
