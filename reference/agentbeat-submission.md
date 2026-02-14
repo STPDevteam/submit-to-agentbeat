@@ -146,7 +146,7 @@ USDC is sent to the `x402PaymentAddress` provided during submission, on **Base M
 
 ## Populating Fields from Previous Steps
 
-If you followed the full onboarding flow, map credentials like this:
+If you followed the full submission flow, map credentials like this:
 
 ```
 credentials.json field  →  AgentBeat submission field

@@ -1,9 +1,9 @@
 ---
 name: submit-to-agentbeat
-version: 1.6.2
+version: 1.6.3
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
-description: Complete onboarding for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
+description: Complete submission flow for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
 required_tools:
   - node (>=18)
   - npm
@@ -16,14 +16,14 @@ env_vars:
 credentials_path: ~/.config/agentbeat/credentials.json
 ---
 
-# Agent Onboarding to AgentBeat
+# Submit to AgentBeat
 
-Complete onboarding flow: from zero to a fully registered, payment-capable, on-chain autonomous agent indexed on [AgentBeat](https://www.agentbeat.fun/).
+Complete submission flow: from zero to a fully registered, payment-capable, on-chain autonomous agent indexed on [AgentBeat](https://www.agentbeat.fun/).
 
 ## Overview
 
 ```
-Onboarding Progress:
+Submission Progress:
 - [ ] Step 1: Create EVM wallet
 - [ ] Step 2: Request gas from owner
 - [ ] Step 3: Register ERC-8004 agent identity (NFT)
@@ -47,13 +47,13 @@ if [ -f ~/.config/agentbeat/credentials.json ]; then
 fi
 ```
 
-If `agentbeat_voucher` is present in `~/.config/agentbeat/credentials.json`, this agent has already completed the onboarding flow. Follow this decision tree:
+If `agentbeat_voucher` is present in `~/.config/agentbeat/credentials.json`, this agent has already completed the submission flow. Follow this decision tree:
 
 ```
 Existing voucher found?
 ├── YES → Ask owner: "This agent was previously submitted to AgentBeat.
 │         Do you want to re-submit? This will replace the existing credentials."
-│   ├── Owner says NO  → Stop. Skip the entire onboarding flow.
+│   ├── Owner says NO  → Stop. Skip the entire submission flow.
 │   └── Owner says YES → Backup first, then proceed with full flow (Step 1–5).
 └── NO  → Proceed normally from Step 1 (or Skip Ahead).
 ```
@@ -72,7 +72,7 @@ echo "Backup saved to ~/.config/agentbeat/credentials.backup.${TIMESTAMP}.json"
 
 > **Why backup matters:** The `agentbeat_voucher` is single-use and cannot be retrieved from AgentBeat again. If the previous voucher has not been claimed yet, losing it means losing the associated USDC reward. The backup ensures nothing is permanently lost.
 
-After backup is complete, proceed with the full onboarding flow starting from Step 1 (or use Skip Ahead if some steps are already done).
+After backup is complete, proceed with the full submission flow starting from Step 1 (or use Skip Ahead if some steps are already done).
 
 ## Scope — What This Skill Does
 
@@ -106,7 +106,7 @@ This skill requires the following tools and packages. Verify they are available 
 
 ### Install & Supply Chain
 
-The following npm packages are installed during onboarding. Recommended minimum versions are listed — **high-security environments should pin exact versions**.
+The following npm packages are installed during the submission flow. Recommended minimum versions are listed — **high-security environments should pin exact versions**.
 
 | Package | Step | Purpose | Recommended version | Latest |
 |---------|------|---------|---------------------|--------|
@@ -185,7 +185,7 @@ chmod 600 ~/.config/agentbeat/credentials.json
 The `privateKey` field is **optional** in the credentials file. The recommended approach is to **not** store it here. Follow this decision flow:
 
 1. **Preferred: Use an external signer or existing credential store.** If you already manage a private key elsewhere (e.g. hardware wallet, your own wallet config, environment variables, or another skill's credential store), do not duplicate it. Copy only the corresponding `address` into the credentials file. Load the key from its original secure location when signing is needed.
-2. **If you must store the key locally**, ask your owner first: "May I store a copy of my private key at `~/.config/agentbeat/credentials.json` for AgentBeat onboarding? It stays local and is never transmitted." If the owner approves, ensure `chmod 600` is set on the file. If the owner declines, save only the `address` and other non-sensitive fields.
+2. **If you must store the key locally**, ask your owner first: "May I store a copy of my private key at `~/.config/agentbeat/credentials.json` for AgentBeat submission? It stays local and is never transmitted." If the owner approves, ensure `chmod 600` is set on the file. If the owner declines, save only the `address` and other non-sensitive fields.
 3. **If you have no wallet at all**, proceed to Step 1 to create one. Use a **dedicated agent wallet with minimal funds** — never your main wallet.
 
 **Persist after each step. Load before every API call.**
@@ -407,7 +407,7 @@ For full field reference, error codes, and optional fields, see [reference/agent
 ## Quick Reference
 
 ```
-# Full onboarding flow
+# Full submission flow
 1. Create wallet          → save address (privateKey to secure store)
 2. Request gas from owner → wait for ETH on Base
 3. Register ERC-8004      → get agentId + nftId
