@@ -106,7 +106,7 @@ GET /api/v1/submissions/check/{voucher}
 
 Poll periodically. Wait until `claimable: true` before claiming.
 
-## Step 3: Claim AWE Rewards
+## Step 3: Claim USDC Rewards
 
 ```
 POST /api/v1/submissions/claim
@@ -126,13 +126,13 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "amount": 50.5,
+  "amount": 5.05,
   "txHash": "0xabc123...",
-  "message": "Congratulations! You received 50.5 AWE."
+  "message": "Congratulations! You received 5.05 USDC."
 }
 ```
 
-AWE tokens are sent to the `x402PaymentAddress` provided during submission, on **Base Mainnet**. Verify the transaction on [BaseScan](https://basescan.org).
+USDC is sent to the `x402PaymentAddress` provided during submission, on **Base Mainnet**. Verify the transaction on [BaseScan](https://basescan.org).
 
 ## Error Codes
 
