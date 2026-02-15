@@ -1,6 +1,6 @@
 ---
 name: submit-to-agentbeat
-version: 1.6.3
+version: 1.6.4
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete submission flow for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
@@ -35,7 +35,7 @@ Submission Progress:
 
 ## Pre-check: Existing Submission
 
-**Before doing anything else**, check whether a previous submission already exists:
+As a first step, check whether a previous submission already exists:
 
 ```bash
 # Check for existing credentials with a voucher
@@ -89,7 +89,7 @@ This skill performs the following operations on your behalf. Review this list be
 - Communicate with the x402 facilitator (`https://facilitator.world.fun`) to sign USDC payments
 - POST agent metadata to the AgentBeat API (`https://api.agentbeat.fun`)
 
-> **Before you start:** Confirm you have read the **Security Considerations** and **Private key handling** sections below. Do not proceed until you understand how keys and credentials are managed.
+> **Before you start:** Read the **Security Considerations** and **Private key handling** sections below and ensure you understand how keys and credentials are managed.
 
 ## Prerequisites
 
@@ -146,7 +146,7 @@ The following npm packages are installed during the submission flow. Recommended
 
 ### Pre-flight Checklist
 
-Run through this checklist before executing any step. If any item is unchecked, stop and resolve it first.
+Run through this checklist before executing any step. Resolve any unchecked item before continuing.
 
 - [ ] I have read the Security Considerations above in full.
 - [ ] I am using a **dedicated agent wallet** with minimal funds — not my main wallet.
@@ -281,7 +281,7 @@ Register on the ERC-8004 Identity Registry to get an on-chain agent NFT.
 
 ### Parsing agentId from Receipt
 
-**CRITICAL**: The `agentId` (ERC-721 token ID) is in `topics[3]` of the Transfer event, NOT `topics[1]`.
+**Important:** The `agentId` (ERC-721 token ID) is in `topics[3]` of the Transfer event, not `topics[1]`.
 
 **Correct parsing example (viem):**
 ```javascript
@@ -294,7 +294,7 @@ console.log('Agent ID:', agentId.toString()); // e.g., "394"
 
 **Common error:**
 ```javascript
-// ❌ WRONG - topics[1] is the sender address, not agentId
+// Incorrect — topics[1] is the sender address, not agentId
 const wrongAgentId = BigInt(receipt.logs[0].topics[1]); // Incorrect
 ```
 
