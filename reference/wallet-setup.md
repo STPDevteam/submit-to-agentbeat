@@ -69,7 +69,7 @@ EOF
 chmod 600 ~/.config/agentbeat/credentials.json
 ```
 
-**Security**: Set file permissions to 600 (owner read/write only). Never commit this file to version control.
+**Security**: Set file permissions to 600 (owner read/write only). Do not commit this file to version control.
 
 ## Checking Balance
 
