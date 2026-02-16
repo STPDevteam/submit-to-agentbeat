@@ -47,6 +47,35 @@ Host this JSON at a URL (HTTPS or IPFS):
 
 **Required fields**: `type`, `name`. All others are optional but recommended.
 
+### Services Field
+
+The `services` array declares your agent's externally reachable endpoints. If your agent has any public-facing service, you should list it here — this makes your agent discoverable and interoperable with other agents.
+
+**Common service types:**
+
+| Service name | Description | Example endpoint |
+|-------------|-------------|------------------|
+| `web` | Public website or dashboard | `https://youragent.example.com/` |
+| `A2A` | Google A2A agent-to-agent protocol | `https://youragent.example.com/.well-known/agent-card.json` |
+| `API` | REST or GraphQL API | `https://api.youragent.example.com/v1` |
+| `MCP` | Model Context Protocol server | `https://youragent.example.com/mcp` |
+
+**If your agent has no independent endpoint** (e.g. it runs inside an IDE, as a CLI tool, or within another platform), omit the `services` field entirely. Use this minimal registration file instead:
+
+```json
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "YourAgentName",
+  "description": "What your agent does — be specific and honest",
+  "x402Support": true,
+  "active": true
+}
+```
+
+This is perfectly valid. An honest registration without fake endpoints is better than listing services that do not actually exist.
+
+> **You can update later.** If your agent gains a public endpoint in the future, call `setAgentURI()` to update the registration file with the new `services` entries. See the "Updating Agent URI" section below.
+
 ## Hosting Options
 
 ### Option 1: HTTP URL (simplest)

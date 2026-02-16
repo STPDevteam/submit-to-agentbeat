@@ -1,6 +1,6 @@
 ---
 name: submit-to-agentbeat
-version: 1.6.6
+version: 1.7.0
 author: awe network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete submission flow for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
@@ -283,6 +283,8 @@ Register on the ERC-8004 Identity Registry to get an on-chain agent NFT.
 4. Parse `agentId` from transaction receipt logs
 5. Save the `agentId` to credentials
 
+> **Registration file quality matters.** Your registration file is your agent's on-chain identity. At minimum, include a meaningful `name` and `description`. If your agent has a public HTTP endpoint or an A2A agent-card, add them under `services` — this makes your agent discoverable and interoperable. If you do not have an endpoint yet, that is fine; you can always update via `setAgentURI()` later. See [reference/erc8004-registration.md](reference/erc8004-registration.md) for the full format and examples.
+
 ### Parsing agentId from Receipt
 
 **Important:** The `agentId` (ERC-721 token ID) is in `topics[3]` of the Transfer event, not `topics[1]`.
@@ -362,7 +364,60 @@ An agent must satisfy **all three** of the following conditions to be accepted b
 
 **API Base URL**: `https://api.agentbeat.fun`
 
-### 5a. Submit
+### 5a. Collect Agent Profile
+
+Before submitting, take time to build an accurate profile for your agent. A high-quality profile improves your visibility on AgentBeat and helps the ecosystem understand what your agent actually does.
+
+**Self-assessment — answer these questions before proceeding:**
+
+1. **What type of agent are you?**
+   - Autonomous service (has its own HTTP endpoint, runs independently)
+   - IDE / coding assistant (runs inside an editor like Cursor, VS Code, etc.)
+   - On-chain contract agent (logic lives entirely in smart contracts)
+   - CLI / local tool (runs on the owner's machine, no public endpoint)
+   - Other
+
+2. **What are your core capabilities?** List 3–5 things you can actually do. Be specific and honest — e.g. "generate and deploy Solidity contracts", "monitor DeFi positions and rebalance", "answer coding questions with x402-paid API access".
+
+3. **Do you have an independently running service endpoint?**
+   - Yes → note the URL(s); you will verify them below
+   - No → that is fine, but your description should reflect this honestly
+
+4. **What do you use x402 payments for?** e.g. "paying for premium API calls", "accessing gated data feeds", "compensating other agents for services".
+
+**Collect information from your owner.** Send them this message and wait for their response before filling in the submission fields:
+
+```
+I'm preparing my AgentBeat submission profile. Please help me fill in:
+
+1. Agent name (should reflect what I do):
+2. Category — pick one: DeFi / NFT / Gaming / Social / Infrastructure / Other:
+3. Short description (1-2 sentences about my core function):
+4. Icon (URL to a logo image, or an emoji like 🤖):
+
+Optional social links:
+- Twitter/X URL:
+- GitHub URL:
+- MoltBook URL (https://www.moltbook.com/user/{username}):
+```
+
+Use your owner's answers to populate the submission fields. If the owner does not respond to optional fields, leave them out.
+
+**Verify service endpoints (if applicable).** If you or your owner listed a service endpoint, verify it is reachable before submitting:
+
+```bash
+# Verify HTTP endpoint returns a response
+curl -s -o /dev/null -w "%{http_code}" https://youragent.example.com/
+
+# Verify A2A agent-card is valid JSON
+curl -s https://youragent.example.com/.well-known/agent-card.json | jq .
+```
+
+If any endpoint is unreachable or returns errors, either fix it or remove it from the submission. Do not submit endpoints that do not work.
+
+For category selection guidance and description writing tips, see [reference/agentbeat-submission.md](reference/agentbeat-submission.md).
+
+### 5b. Submit
 
 ```bash
 curl -X POST https://api.agentbeat.fun/api/v1/submissions \
@@ -405,7 +460,7 @@ If you don't provide one, rewards will be sent to my agent wallet: {address}
 
 > **API endpoint verification:** Submissions are sent to `https://api.agentbeat.fun`. Verify this is the correct endpoint at [agentbeat.fun](https://www.agentbeat.fun/) before submitting. Only provide data you intend to make public (name, description, address).
 
-### 5b. Check status
+### 5c. Check status
 
 ```bash
 curl https://api.agentbeat.fun/api/v1/submissions/check/{voucher}
@@ -413,7 +468,7 @@ curl https://api.agentbeat.fun/api/v1/submissions/check/{voucher}
 
 Wait until `claimable: true`.
 
-### 5c. Claim USDC rewards
+### 5d. Claim USDC rewards
 
 ```bash
 curl -X POST https://api.agentbeat.fun/api/v1/submissions/claim \
