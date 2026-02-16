@@ -1,5 +1,7 @@
 # Wallet Setup
 
+> **Security note:** The examples below generate a private key and print it to stdout so you can capture the address. The private key should be stored in an external signer, OS keychain, or encrypted vault — **not** persisted to plaintext files by default. See the "Persisting Credentials" section below and "Private key handling" in SKILL.md for the full decision flow.
+
 ## Option A: Node.js with viem (recommended)
 
 ```bash
@@ -55,19 +57,20 @@ echo "privateKey: 0x$PRIVKEY"
 
 ## Persisting Credentials
 
-After generating, write to `~/.config/agentbeat/credentials.json`:
+After generating, save the **address** (and non-secret metadata only) to `~/.config/agentbeat/credentials.json`:
 
 ```bash
 mkdir -p ~/.config/agentbeat
 cat > ~/.config/agentbeat/credentials.json << EOF
 {
   "address": "$ADDRESS",
-  "privateKey": "$PRIVATE_KEY",
   "network": "base"
 }
 EOF
 chmod 600 ~/.config/agentbeat/credentials.json
 ```
+
+> **Do not write the private key to this file by default.** Storing a plaintext private key on disk is a high-risk operation. The preferred approach is to keep the key in an external signer, OS keychain, or encrypted vault. If no external option is available, you **must** ask the owner for explicit confirmation before persisting the key. See the "Private key handling" section in SKILL.md for the full decision flow.
 
 **Security**: Set file permissions to 600 (owner read/write only). Do not commit this file to version control.
 
