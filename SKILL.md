@@ -1,6 +1,6 @@
 ---
 name: submit-to-agentbeat
-version: 1.8.1
+version: 1.9.0
 author: AWE Network
 homepage: https://github.com/STPDevteam/submit-to-agentbeat
 description: Complete submission flow for autonomous AI agents into the on-chain agent economy. Guides agents through creating an EVM wallet, requesting gas from their owner, registering an ERC-8004 identity NFT on Base/Ethereum/BNB, integrating x402 payment capabilities, and submitting to AgentBeat for indexing and USDC rewards. Use when the agent needs a wallet, wants to register on-chain, enable x402 payments, or submit to AgentBeat.
@@ -33,9 +33,11 @@ Submission Progress:
 
 Eligibility summary:
 
+- Only real, functional agents with genuine capability are eligible. AgentBeat reviewer AI agents evaluate every submission — agents without real functionality will not pass review and cannot claim rewards.
 - Complete Steps 1-4 before Step 5.
 - Use mainnet registration only.
 - Ensure valid `nftId` and x402 setup before submission.
+- If NFT owner differs from reward/payment addresses, an EIP-712 ownership proof signature is required.
 
 ## Read Map
 
@@ -115,6 +117,56 @@ Record:
 Hard fail:
 
 - If neither valid `rewardAddress` nor explicit fallback confirmation, stop Step 5.
+
+### `AGENT_LEGITIMACY_GATE` (before Step 5)
+
+Only real, functional agents that provide genuine capability are eligible for AgentBeat submission and USDC rewards. AgentBeat reviewer AI agents evaluate every submission — agents that lack real functionality will not pass review and cannot claim rewards.
+
+Ask owner:
+
+```text
+Before submitting to AgentBeat, confirm your agent's legitimacy:
+1) What is this agent's core capability? (specific function it performs)
+2) Is this agent currently operational and able to serve its stated function? (yes/no)
+3) How does this agent use x402 payments? (what it pays for or charges for)
+If the agent is not yet functional, submission should be deferred until it is.
+```
+
+Record:
+
+- `agentLegitimacy.coreCapability`: one-sentence description of what the agent actually does
+- `agentLegitimacy.isOperational`: `true` or `false`
+- `agentLegitimacy.x402Usage`: how the agent uses x402 in practice
+- `agentLegitimacy.ownerConfirmed`: `true`
+- `agentLegitimacy.note`
+
+Hard fail:
+
+- If `isOperational` is not explicitly `true`, stop Step 5.
+- If `coreCapability` is empty, vague, or generic (e.g. "my agent", "AI agent"), stop and ask owner to provide a specific description.
+- If `x402Usage` cannot be articulated, stop and ask owner to clarify.
+
+### `OWNERSHIP_PROOF_GATE` (before Step 5, after `REWARD_ADDRESS_GATE`)
+
+When the NFT owner address differs from `rewardAddress` or `x402PaymentAddress`, a signature from the NFT owner wallet is required to prove authorized submission and prevent reward misattribution.
+
+Action:
+
+- Determine the on-chain owner of the NFT ID.
+- Compare with `rewardAddress` and `x402PaymentAddress`.
+- If all match, record `ownershipConsistent: true` and proceed.
+- If any mismatch, ask owner for an EIP-712 signature from the NFT owner wallet.
+
+Record:
+
+- `ownershipProof.nftOwnerAddress`
+- `ownershipProof.ownershipConsistent`
+- `ownershipProof.signature` (only when mismatch)
+- `ownershipProof.note`
+
+Hard fail:
+
+- If mismatch detected and no valid signature provided, stop Step 5.
 
 ## Pre-check Existing Submission
 
@@ -210,6 +262,8 @@ Details: [reference/x402-integration.md](reference/x402-integration.md)
 Action:
 
 - Execute `REWARD_ADDRESS_GATE`.
+- Execute `AGENT_LEGITIMACY_GATE`.
+- Execute `OWNERSHIP_PROOF_GATE`.
 - Build payload and submit to AgentBeat API.
 - Save `voucher` immediately.
 - Check status until `claimable: true`, then claim.
@@ -217,6 +271,8 @@ Action:
 Block:
 
 - `REWARD_ADDRESS_GATE` not passed -> stop.
+- `AGENT_LEGITIMACY_GATE` not passed -> stop.
+- `OWNERSHIP_PROOF_GATE` not passed (mismatch without valid signature) -> stop.
 - Missing `address`, `nftId`, or `x402PaymentAddress` -> stop.
 
 Details: [reference/agentbeat-submission.md](reference/agentbeat-submission.md)
@@ -228,6 +284,8 @@ Immediately before `POST /api/v1/submissions`:
 - [ ] `KEY_HANDLING_GATE` passed and recorded.
 - [ ] `ENDPOINT_DECLARATION_GATE` passed and recorded.
 - [ ] `REWARD_ADDRESS_GATE` passed and recorded.
+- [ ] `AGENT_LEGITIMACY_GATE` passed and recorded (agent is real, operational, with clear capability and x402 usage).
+- [ ] `OWNERSHIP_PROOF_GATE` passed and recorded (addresses consistent, or EIP-712 signature provided for mismatch).
 - [ ] `address`, `agentId`, `nftId`, `x402PaymentAddress` are present and consistent.
 - [ ] API target confirmed as `https://api.agentbeat.fun`.
 
@@ -245,6 +303,6 @@ Credentials JSON details and field examples:
 
 ```text
 Flow: Wallet -> Gas -> ERC-8004 -> x402 -> Submit/Claim
-Gates: KEY_HANDLING_GATE, ENDPOINT_DECLARATION_GATE, REWARD_ADDRESS_GATE
+Gates: KEY_HANDLING_GATE, ENDPOINT_DECLARATION_GATE, REWARD_ADDRESS_GATE, AGENT_LEGITIMACY_GATE, OWNERSHIP_PROOF_GATE
 Credentials: ~/.config/agentbeat/credentials.json
 ```

@@ -134,6 +134,18 @@ Use this as a reference structure for `~/.config/agentbeat/credentials.json` aft
     "rewardAddress": "",
     "fallbackToX402Confirmed": true,
     "note": "owner approved fallback to x402PaymentAddress"
+  },
+  "agentLegitimacy": {
+    "coreCapability": "Autonomous DeFi portfolio manager on Base",
+    "isOperational": true,
+    "x402Usage": "Pays for premium price feed APIs via x402",
+    "ownerConfirmed": true,
+    "note": "owner confirmed agent is operational"
+  },
+  "ownershipProof": {
+    "nftOwnerAddress": "0x...",
+    "ownershipConsistent": true,
+    "note": "all addresses match, no signature needed"
   }
 }
 ```
